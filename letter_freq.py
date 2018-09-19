@@ -10,10 +10,9 @@ Author: Justin Yau
 """
 
 import argparse                     # ArgumentParser
-import word_count                   # read_words
+import word_freq                   # read_words
 import numpy as np                  # arange
 import sys                          # maxsize
-import operator                     # attrgetter, itemgetter
 import matplotlib.pyplot as plt     # bar, title, ylabel, xlabel, xticks, yticks, show
 from word_count import Word
 from typing import List
@@ -30,7 +29,7 @@ def calculate_frequencies(data: List[Word]) -> dict:
     :return: A dictionary with all the letter counts
     """
     frequencies = initialize_dictionary()
-    count = determine_count1(data)
+    count = determine_count(data)
     for letter in ALPHABET:
         frequencies[letter] = count[letter]/count["sum"]
     return frequencies
@@ -71,7 +70,7 @@ def plot_frequencies(data: dict, title: str) -> None:
     x_data = []
     for letter in ALPHABET:
         x_data.append(data[letter])
-    bargraph = plt.bar(ind, x_data, width)
+    plt.bar(ind, x_data, width)
     plt.title("Letter Frequencies: " + title)
     plt.ylabel("Frequency")
     plt.xlabel("Letters")
@@ -80,38 +79,19 @@ def plot_frequencies(data: dict, title: str) -> None:
     plt.show()
 
 
-def determine_count(data: List[Word]) -> dict:
-    """
-    SLOW VERSION
-    Goes through the dictionary entries and determines the number of times each letter appears in the words
-    :param data: The data to be searched
-    :return: A dictionary with the number of times each letter appears in the words of the specified dictionary
-    """
-    count = initialize_dictionary()
-    sum = 0
-    for letter in ALPHABET:
-        appearances = 0
-        for counts in [[word.Name.count(letter)] for word in data if word.Name.count(letter) > 0]:
-            appearances += counts[0]
-        count[letter] = appearances
-        sum += count[letter]
-    count["sum"] = sum
-    return count
-
-
-def determine_count1(data: List[Word]) -> dict:
+def determine_count(data: dict) -> dict:
     """
     FASTER VERSION
     Goes through the dictionary entries and determines the number of times each letter appears in the words
     :param data: The data to be searched
     :return: A dictionary with the number of times each letter appears in the words of the specified dictionary
     """
-    long_string = ''.join(list(map(operator.attrgetter('Name'), data)))
     count = initialize_dictionary()
     sum = 0
-    for letter in ALPHABET:
-        count[letter] = long_string.count(letter)
-        sum += count[letter]
+    for key, value in data.items():
+        for letter in key:
+            count[letter] += value
+            sum += value
     count["sum"] = sum
     return count
 
@@ -138,7 +118,7 @@ def main():
     parser.add_argument("filename", help="A comma separated value unigram file")
     args = parser.parse_args()
     print("Reading File")
-    dictionary = word_count.read_words(args.filename)
+    dictionary = word_freq.read_words(args.filename)
     print("Done Reading File...")
     print("Processing...")
     if args.output or args.plot:
