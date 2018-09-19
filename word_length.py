@@ -31,11 +31,12 @@ def read_words(path: str, start: int, end: int) -> dict:
             for line in f:
                 fields = line.split(", ")
                 if start <= fields[1] <= end:
+                    word_length = int((len(fields[0]) * int(fields[2])))
                     if fields[1] in dictionary:
-                        dictionary[fields[1]].append(len(fields[0]))
-                        dictionary[fields[1]][0] += len(fields[0])
+                        dictionary[fields[1]][1] += int(fields[2])
+                        dictionary[fields[1]][0] += word_length
                     else:
-                        dictionary[fields[1]] = [len(fields[0]), len(fields[0])]
+                        dictionary[fields[1]] = [word_length, int(fields[2])]
         return dictionary
     except FileNotFoundError:
         sys.stderr.write("Error: " + path + " does not exist!")
@@ -60,7 +61,7 @@ def average_length(data: dict) -> dict:
     """
     dictionary = {}
     for key in data.items():
-        dictionary[key[0]] = int(key[1][0])/(len(key[1]) - 1)
+        dictionary[key[0]] = int(key[1][0])/int((key[1][1]))
     return dictionary
 
 
