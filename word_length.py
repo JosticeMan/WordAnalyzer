@@ -80,7 +80,7 @@ def plot_lengths(data: List[Tuple], start: int, end: int, filename: str) -> None
     plt.xlabel("Year")
     plt.ylabel("Average Word Length")
     plt.title("Average Word Length from " + str(start) + " to " + str(end) + ": " + filename)
-    plt.xticks(x_data[::int(((int(start) - int(end))/5))])
+    plt.xticks(x_data[::int(((int(start) - int(end))/2))])
     plt.show()
 
 
